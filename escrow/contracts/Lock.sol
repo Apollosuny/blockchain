@@ -5,30 +5,29 @@ pragma solidity ^0.8.27;
 // import "hardhat/console.sol";
 
 contract Lock {
-    uint public unlockTime;
-    address payable public owner;
+    address public owner;
+    address public claimer;
+    uint public totalAmount;
+    uint public startTime;
+    uint public installments;
+    uint public installmentAmount;
+    uint public withDrawnInstallments;
 
-    event Withdrawal(uint amount, uint when);
+    error OnlyClaimerCanWithdraw(address _operator);
 
-    constructor(uint _unlockTime) payable {
-        require(
-            block.timestamp < _unlockTime,
-            "Unlock time should be in the future"
-        );
-
-        unlockTime = _unlockTime;
-        owner = payable(msg.sender);
+    constructor(address _claimer, uint _installments) payable {
+        owner = msg.sender;
+        claimer = _claimer;
+        totalAmount = msg.value;
+        startTime = block.timestamp;
+        installments = _installments;
+        installmentAmount = totalAmount / installments;
+        withDrawnInstallments = 0;
     }
 
     function withdraw() public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
-
-        require(block.timestamp >= unlockTime, "You can't withdraw yet");
-        require(msg.sender == owner, "You aren't the owner");
-
-        emit Withdrawal(address(this).balance, block.timestamp);
-
-        owner.transfer(address(this).balance);
+        if (msg.sender != claimer) revert OnlyClaimerCanWithdraw(msg.sender);
+        
+        
     }
 }
