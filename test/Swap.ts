@@ -11,19 +11,19 @@ describe('Swap', function () {
   beforeEach(async function () {
     [owner, addr1] = await ethers.getSigners();
 
-    const ERC20Factory = await ethers.getContractFactory('ERC20');
-    apolloToken = (await ERC20Factory.deploy('Apollo Token', 'ATK')) as any;
-    moonToken = (await ERC20Factory.deploy('Moon Token', 'MTK')) as any;
+    const MockERC20Factory = await ethers.getContractFactory('MockERC20');
+    apolloToken = await MockERC20Factory.deploy('Apollo Token', 'ATK');
+    moonToken = await MockERC20Factory.deploy('Moon Token', 'MTK');
 
-    await apolloToken.deployed();
-    await moonToken.deployed();
+    // await apolloToken.deployed();
+    // await moonToken.deployed();
 
     const SwapFactory = await ethers.getContractFactory('Swap');
     swap = (await SwapFactory.deploy(
       apolloToken.address,
       moonToken.address
     )) as any;
-    await swap.deployed();
+    // await swap.deployed();
 
     await apolloToken.mint(owner.address, ethers.parseUnits('1000', 18));
     await moonToken.mint(owner.address, ethers.parseUnits('1000', 18));
