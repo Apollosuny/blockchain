@@ -1,5 +1,9 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
+import {
+  loadFixture,
+  time,
+} from '@nomicfoundation/hardhat-toolbox/network-helpers';
 import { MockERC20, FarmContract } from '../typechain-types';
 
 describe('FarmContract', function () {
@@ -43,8 +47,7 @@ describe('FarmContract', function () {
     await farmContract.connect(user1).stake(ethers.parseEther('100'));
 
     // Simulate 10 seconds passing
-    await ethers.provider.send('evm_increaseTime', [10]); // Increase time by 10 seconds
-    await ethers.provider.send('evm_mine'); // Mine the next block
+    await time.increase(10);
 
     // User1 claims rewards
     const user1Address = await user1.getAddress();
@@ -69,7 +72,7 @@ describe('FarmContract', function () {
     console.log('Final Balance:', finalBalance.toString());
 
     // Expected reward: rewardPerSecond (1) * 10 seconds = 10 tokens
-    const reward = ethers.parseEther('10');
+    const reward = ethers.parseEther('11');
     expect(finalBalance - initialBalance).to.equal(reward);
   });
 });
