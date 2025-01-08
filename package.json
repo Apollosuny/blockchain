@@ -11,8 +11,8 @@
     "coverage": "npx hardhat coverage",
     "gas-report": "npx hardhat gas-report",
     "lint": "npx hardhat lint",
-    "prepare": "npm run compile",
-    "postpublish": "npm run prepare"
+    "prepare": "yarn run compile",
+    "postpublish": "yarn run prepare"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
