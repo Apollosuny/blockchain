@@ -52,7 +52,6 @@ contract VerifySignature {
             s := mload(add(sig, 64))
             v := byte(0, mload(add(sig, 96)))
         }
-        // Điều chỉnh v nếu cần
         if (v < 27) {
             v += 27;
         }
