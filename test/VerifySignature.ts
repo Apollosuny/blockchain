@@ -31,9 +31,9 @@ describe('VerifySignature Contract', () => {
     );
 
     const isValid = await contract.verify(
-      serverPublicAddress,
       messageHash,
-      signature
+      signature,
+      serverPublicAddress
     );
 
     expect(isValid).to.be.true;
