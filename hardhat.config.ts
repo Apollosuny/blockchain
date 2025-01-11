@@ -8,7 +8,7 @@ const config: HardhatUserConfig = {
   solidity: '0.8.28',
   typechain: {
     outDir: 'typechain-types',
-    target: 'ethers-v6', // Đảm bảo sử dụng ethers-v5
+    target: 'ethers-v5',
   },
 };
 
