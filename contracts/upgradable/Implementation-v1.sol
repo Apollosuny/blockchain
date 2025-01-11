@@ -1,13 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-contract ImplementationV1 {
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-    function initialize() public {
-        // This function is kept empty to demonstrate that the initialize function is not mandatory
+contract ImplementationV1 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
+    string private _version;
+    
+    function initialize() public initializer {
+        __Ownable_init(msg.sender);
+        __UUPSUpgradeable_init();
+        _version = "Version 1";
+    }
+    
+    function version() public view returns (string memory) {
+        return _version;
     }
 
-    function version() public pure returns (string memory) {
-        return "Version 1";
-    }
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 }

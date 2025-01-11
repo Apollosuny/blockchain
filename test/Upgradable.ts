@@ -1,64 +1,34 @@
-// import { expect } from 'chai';
-// import { ContractFactory } from 'ethers';
-// import { ethers, upgrades } from 'hardhat';
+import { ethers, upgrades } from 'hardhat';
+import { expect } from 'chai';
 
-// describe('Demo Proxy', function () {
-//   let proxy: any;
-//   let implementationV1: any;
-//   let implementationV2: any;
+describe('Proxy Upgrade with Upgrades Plugin', function () {
+  let proxy: any;
 
-//   describe('Proxy interaction', function () {
-//     it('Should be interactable via proxy with ImplementationV1', async function () {
-//       const [owner, otherAccount] = await ethers.getSigners();
+  it('Should deploy and return Version 1', async function () {
+    const ImplementationV1 = await ethers.getContractFactory(
+      'ImplementationV1'
+    );
+    proxy = await upgrades.deployProxy(ImplementationV1, [], {
+      initializer: 'initialize',
+    });
+    await proxy.waitForDeployment();
 
-//       // Deploy ImplementationV1 with proxy
-//       const ImplementationV1 = await ethers.getContractFactory(
-//         'ImplementationV1'
-//       );
-//       proxy = await upgrades.deployProxy(
-//         ImplementationV1 as unknown as ContractFactory,
-//         [],
-//         {
-//           initializer: 'initialize',
-//         }
-//       );
-//       await proxy.deployed();
+    const address = await proxy.getAddress();
 
-//       // Check version
-//       expect(await proxy.connect(otherAccount ).version()).to.equal('Version 1');
-//     });
-//   });
+    console.log('Proxy address:', address);
 
-//   describe('Upgrading', function () {
-//     it('Should have upgraded the proxy to DemoV2', async function () {
-//       const [owner, otherAccount] = await ethers.getSigners();
+    const version = await proxy.version();
+    expect(version).to.equal('Version 1');
+  });
 
-//       // Deploy and upgrade to ImplementationV2
-//       const ImplementationV2 = await ethers.getContractFactory(
-//         'ImplementationV2'
-//       );
-//       const upgradedProxy = await upgrades.upgradeProxy(
-//         proxy.address,
-//         ImplementationV2 as unknown as ContractFactory
-//       );
+  it('Should upgrade to Version 2', async function () {
+    const ImplementationV2 = await ethers.getContractFactory(
+      'ImplementationV2'
+    );
+    const address = await proxy.getAddress();
+    proxy = await upgrades.upgradeProxy(address, ImplementationV2);
 
-//       // Check if the version is upgraded
-//       expect(await upgradedProxy.connect(otherAccount).version()).to.equal(
-//         'Version 2'
-//       );
-//     });
-
-//     it('Should have set the name during upgrade', async function () {
-//       const [owner, otherAccount] = await ethers.getSigners();
-
-//       // Get the proxy instance with V2 interface
-//       const demoV2 = await ethers.getContractAt(
-//         'ImplementationV2',
-//         proxy.address
-//       );
-//       expect(await demoV2.connect(otherAccount).name()).to.equal(
-//         'Example Name'
-//       );
-//     });
-//   });
-// });
+    const version = await proxy.version();
+    expect(version).to.equal('Version 2');
+  });
+});
